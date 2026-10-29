@@ -1,1 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Organisers · Cherry Blossom Festival</title>
+<style>
+:root{--bg:#fbf0ec;--paper:#fff8f5;--ink:#4a3338;--mute:#8d7479;--tint:#f6dde0;--line:#ecd5d3;--pri:#b8697a;--bad:#a4525f}
+@media (prefers-color-scheme:dark){:root{--bg:#2a2024;--paper:#35282d;--ink:#f3e4e2;--mute:#b79ea2;--tint:#4a3339;--line:#4a3a40;--pri:#c9798b;--bad:#e59aa6}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:calc(10px + env(safe-area-inset-top)) 16px 10px;display:flex;align-items:center;gap:8px}
+header b{flex:1;font:500 1.2rem Georgia,serif}
+main{max-width:640px;margin:0 auto;padding:16px 16px calc(96px + env(safe-area-inset-bottom))}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:inherit;font-size:.95rem;text-decoration:none;cursor:pointer}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.bad{color:var(--bad)}.btn.on{background:var(--tint);border-color:var(--pri)}
+.wide{width:100%;margin-bottom:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.item{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.item p{margin:6px 0 0;white-space:pre-wrap}
+small{color:var(--mute);display:block}
+.chip{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;background:var(--tint);border-radius:99px;padding:2px 9px;vertical-align:middle}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.acts .btn{min-height:40px;padding:0 14px;font-size:.9rem}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(min-width:640px){.grid{grid-template-columns:repeat(3,1fr)}}
+.th{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:8px}
+.th img,.vid{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:var(--tint);display:grid;place-items:center;font-size:1.6rem}
+.th small{padding:6px 2px;min-height:30px}.th .btn{width:100%;min-height:38px;font-size:.85rem}
+.empty{text-align:center;color:var(--mute);padding:30px 0}
+label{display:block;font-size:.85rem;color:var(--mute);margin-top:4px}
+label.ck{display:flex;gap:10px;align-items:center;font-size:1rem;color:var(--ink);margin:6px 0 14px}
+label.ck input{width:22px;height:22px;margin:0}
+input,textarea,select{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:4px 0 12px}
+nav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:var(--paper);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{background:none;border:0;padding:14px 4px;font:inherit;font-size:.85rem;color:var(--mute)}
+nav button.on{color:var(--pri);font-weight:600}
+.login{max-width:360px;margin:0 auto;padding:calc(14vh + env(safe-area-inset-top)) 22px 22px;text-align:center}
+.login h1{font:500 2rem Georgia,serif;margin:0}.login p{color:var(--mute)}
+.ov{position:fixed;inset:0;background:rgba(60,35,42,.5);z-index:20;opacity:0;pointer-events:none;transition:opacity .3s}
+.ov.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;max-height:92vh;overflow:auto;background:var(--paper);border-radius:22px 22px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+.ov.on .sheet{transform:none}
+.sheet h3{font:500 1.3rem Georgia,serif;margin:0 0 12px}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translate(-50%,16px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:.9rem;opacity:0;transition:all .35s;z-index:30;pointer-events:none;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="ov" id="ov"><div class="sheet" id="sheet"></div></div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const yes=v=>v===true||/^(y|yes|true|1)/i.test(v||'');
+let D=null,tab='notices',yr=new Date().getFullYear(),busy=false;
+const api=async(p,o={})=>{const r=await fetch('/api/'+p,{credentials:'same-origin',cache:'no-store',...o});let j={};try{j=await r.json()}catch(e){}if(!r.ok){const e=new Error(j.error||'Something went wrong');e.status=r.status;e.data=j.data;throw e}return j};
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),3800)};
+const now=()=>new Date().toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+const close=()=>$('#ov').classList.remove('on');
+$('#ov').onclick=e=>{if(e.target.id==='ov')close()};
 
+function login(msg){
+ $('#app').innerHTML=`<div class="login"><h1>Organisers</h1><p>Cherry Blossom Festival</p><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><button class="btn pri wide" id="go">Sign in</button><p id="err">${esc(msg||'')}</p></div>`;
+ const go=async()=>{try{await api('login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({password:$('#pw').value})});start()}catch(e){$('#err').textContent=e.message}};
+ $('#go').onclick=go;$('#pw').onkeydown=e=>{if(e.key==='Enter')go()}}
+async function start(){try{D=await api('data?fresh=1');D.info=D.info||{};shell();render()}catch(e){login(e.message)}}
+function shell(){
+ $('#app').innerHTML=`<header><b>Organisers</b><a class="btn" href="/" target="_blank" rel="noopener">View site</a><button class="btn" id="out">Sign out</button></header><main id="mn"></main><nav>${[['notices','Notices'],['events','Events'],['moments','Moments'],['info','Details']].map(t=>`<button data-t="${t[0]}">${t[1]}</button>`).join('')}</nav>`;
+ $('#out').onclick=async()=>{await api('logout',{method:'POST'}).catch(()=>{});login()}}
+function render(){document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));$('#mn').innerHTML=V[tab]()}
+
+async function save(msg){
+ if(busy)return;busy=true;toast('Saving…');
+ try{const r=await api('save',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({v:D.v,data:D})});D.v=r.v;toast(msg||'Saved ✿')}
+ catch(e){if(e.status===409){D=e.data;toast('Someone else just made changes. Showing the latest, please redo your edit.')}else if(e.status===401){login('Please sign in again.')}else toast(e.message)}
+ busy=false;if($('#mn'))render()}
+
+function form(title,fs,v,cb){
+ $('#sheet').innerHTML=`<h3>${title}</h3>`+fs.map(f=>{const id='f_'+f.k,x=v[f.k];
+  if(f.t==='check')return `<label class="ck"><input type="checkbox" id="${id}" ${yes(x)?'checked':''}> ${f.l}</label>`;
+  return `<label for="${id}">${f.l}</label>`+(f.t==='area'?`<textarea id="${id}" rows="4">${esc(x)}</textarea>`
+   :f.t==='select'?`<select id="${id}">${f.o.map(o=>`<option ${o===x?'selected':''}>${o}</option>`).join('')}</select>`
+   :f.t==='file'?`<input id="${id}" type="file" accept="image/*,video/*" multiple>`
+   :`<input id="${id}" type="${f.t||'text'}" value="${esc(x)}" ${f.t==='number'?'inputmode="numeric"':''}>`)}).join('')
+  +`<div class="acts"><button class="btn pri" id="ok">Save</button><button class="btn" id="no">Cancel</button></div>`;
+ $('#ov').classList.add('on');$('#no').onclick=close;
+ $('#ok').onclick=async()=>{const o={};fs.forEach(f=>{const e=$('#f_'+f.k);o[f.k]=f.t==='check'?e.checked:f.t==='file'?[...e.files]:e.value.trim()});if(await cb(o)!==false)close()}}
+const bad=m=>(toast(m),false);
+
+/* ---------- views ---------- */
+const ST=['Coming soon','Open','Updated','Closed','Cancelled'];
+const KEYS=[['email','Contact email'],['phone','Contact phone'],['venue','Venue name'],['route','How to get there','area'],['map','Google Maps link'],['tickets','Ticket details','area'],['stalls','Stall registration details','area']];
+const V={
+ notices:()=>`<button class="btn pri wide" data-a="nn">＋ New notice</button>`+(D.notices.map((n,i)=>[n,i]).reverse().map(([n,i])=>`<div class="item"><b>${esc(n.title)}</b> ${yes(n.pinned)?'<span class="chip">Pinned</span>':''}<small>${esc(n.date)}</small><p>${esc(n.message)}</p><div class="acts"><button class="btn" data-a="en" data-i="${i}">Edit</button><button class="btn" data-a="pn" data-i="${i}">${yes(n.pinned)?'Unpin':'Pin'}</button><button class="btn bad" data-a="dn" data-i="${i}">Delete</button></div></div>`).join('')||'<p class="empty">No notices yet.</p>'),
+ events:()=>`<button class="btn pri wide" data-a="ne">＋ New event</button>`+(D.events.map((e,i)=>`<div class="item"><b>${esc(e.name)}</b><small>${esc(e.when)}</small><p>${esc(e.details)}</p><label>Status</label><select data-a="st" data-i="${i}">${ST.map(o=>`<option ${o.toLowerCase()===(e.status||'').toLowerCase()?'selected':''}>${o}</option>`).join('')}</select><div class="acts"><button class="btn" data-a="ee" data-i="${i}">Edit</button><button class="btn bad" data-a="de" data-i="${i}">Delete</button></div></div>`).join('')||'<p class="empty">No events yet. Add one when plans are decided.</p>'),
+ moments:()=>{const ys=[...new Set([...D.moments.map(m=>+m.year).filter(Boolean),new Date().getFullYear(),yr])].sort((a,b)=>b-a);
+  return `<div class="pills">${ys.map(y=>`<button class="btn ${y===yr?'on':''}" data-a="yr" data-y="${y}">${y}</button>`).join('')}</div><div class="two"><button class="btn pri" data-a="ap">＋ Photos / videos</button><button class="btn pri" data-a="av">＋ Video link</button></div><div class="grid">`
+  +(D.moments.map((m,i)=>[m,i]).filter(([m])=>+m.year===yr).map(([m,i])=>`<div class="th">${m.pid?`<img src="${esc(thumb(m))}" alt="" loading="lazy">`:'<div class="vid">▶</div>'}<small>${esc(m.caption||'')}</small><button class="btn bad" data-a="dm" data-i="${i}">Delete</button></div>`).join('')||`<p class="empty" style="grid-column:1/-1">No moments for ${yr} yet.</p>`)+'</div>'},
+ info:()=>KEYS.map(k=>`<label for="i_${k[0]}">${k[1]}</label>`+(k[2]?`<textarea id="i_${k[0]}" rows="3">${esc(D.info[k[0]])}</textarea>`:`<input id="i_${k[0]}" value="${esc(D.info[k[0]])}">`)).join('')+`<button class="btn pri wide" data-a="si">Save details</button>`
+};
+
+/* ---------- actions ---------- */
+const NF=[{k:'title',l:'Title'},{k:'message',l:'Message',t:'area'},{k:'pinned',l:'Pin to the top',t:'check'},{k:'date',l:'Date / time (blank = now)'}];
+const EF=[{k:'name',l:'Event name'},{k:'when',l:'When and where'},{k:'details',l:'Details (distance, fee…)',t:'area'},{k:'status',l:'Status',t:'select',o:ST}];
+const squeeze=async f=>{const bm=await createImageBitmap(f),s=Math.min(1,1600/Math.max(bm.width,bm.height)),c=document.createElement('canvas');c.width=Math.round(bm.width*s);c.height=Math.round(bm.height*s);c.getContext('2d').drawImage(bm,0,0,c.width,c.height);return new Promise(r=>c.toBlob(r,'image/jpeg',.82))};
+const thumb=m=>'https://res.cloudinary.com/'+D.cloud+'/'+(m.rt==='video'?'video/upload/c_fill,w_300,h_300,so_0,f_jpg/'+m.pid+'.jpg':'image/upload/c_fill,w_300,h_300,q_auto,f_auto/'+m.pid);
+const xhrUp=(url,fd,label)=>new Promise((res,rej)=>{const x=new XMLHttpRequest();x.open('POST',url);x.upload.onprogress=e=>{if(e.lengthComputable)toast(label+' · '+Math.round(e.loaded/e.total*100)+'%')};x.onload=()=>{let j={};try{j=JSON.parse(x.responseText)}catch(e){}x.status<300&&j.public_id?res(j):rej(new Error((j.error&&j.error.message)||'Upload failed'))};x.onerror=()=>rej(new Error('Network error during upload'));x.send(fd)});
+async function cld(file,y,label){const rt=file.type.startsWith('video')?'video':'image';
+ const s=await api('sign',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({year:String(y)})});
+ const fd=new FormData();fd.append('file',rt==='image'&&!/gif/.test(file.type)?await squeeze(file):file);
+ fd.append('api_key',s.apiKey);fd.append('timestamp',s.timestamp);fd.append('signature',s.signature);fd.append('folder',s.folder);
+ const j=await xhrUp(`https://api.cloudinary.com/v1_1/${s.cloud}/${rt}/upload`,fd,label);return{pid:j.public_id,rt}}
+const A={
+ nn:()=>form('New notice',NF,{},n=>{if(!n.title)return bad('Add a title first');n.pinned=n.pinned?'yes':'';n.date=n.date||now();D.notices.push(n);return save('Notice posted ✿')}),
+ en:i=>form('Edit notice',NF,D.notices[i],n=>{if(!n.title)return bad('Add a title first');Object.assign(D.notices[i],n,{pinned:n.pinned?'yes':'',date:n.date||now()});return save()}),
+ pn:i=>{D.notices[i].pinned=yes(D.notices[i].pinned)?'':'yes';save()},
+ dn:i=>{if(confirm('Delete this notice?')){D.notices.splice(i,1);save()}},
+ ne:()=>form('New event',EF,{status:'Coming soon'},e=>{if(!e.name)return bad('Name the event first');D.events.push(e);return save('Event added ✿')}),
+ ee:i=>form('Edit event',EF,D.events[i],e=>{if(!e.name)return bad('Name the event first');Object.assign(D.events[i],e);return save()}),
+ de:i=>{if(confirm('Delete this event?')){D.events.splice(i,1);save()}},
+ ap:()=>form('Add photos or videos',[{k:'year',l:'Year',t:'number'},{k:'caption',l:'Caption (used when adding a single file)'},{k:'photos',l:'Photos or videos',t:'file'}],{year:yr},async o=>{
+  if(!o.photos.length)return bad('Choose files first');const y=+o.year||yr;let n=0;
+  try{for(const f of o.photos){const j=await cld(f,y,`Uploading ${n+1} of ${o.photos.length}`);D.moments.push({year:String(y),pid:j.pid,rt:j.rt,caption:o.photos.length===1?o.caption:'',type:j.rt==='video'?'video':'photo'});n++}}
+  catch(e){toast(e.message)}
+  if(!n)return false;yr=y;return save(n+' file'+(n>1?'s':'')+' added ✿')}),
+ av:()=>form('Add video or link',[{k:'year',l:'Year',t:'number'},{k:'link',l:'YouTube or Google Drive link',t:'url'},{k:'caption',l:'Caption'},{k:'type',l:'Type',t:'select',o:['video','photo']}],{year:yr,type:'video'},o=>{
+  if(!/^https?:\/\//i.test(o.link))return bad('Paste a link that starts with https://');const y=+o.year||yr;yr=y;D.moments.push({year:String(y),link:o.link,caption:o.caption,type:o.type});return save('Added ✿')}),
+ dm:i=>{if(!confirm('Delete this from the album?'))return;const m=D.moments[i];if(m.pid)api('destroy',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({public_id:m.pid,rt:m.rt})}).catch(()=>{});D.moments.splice(i,1);save()},
+ si:()=>{const o={};KEYS.forEach(k=>o[k[0]]=$('#i_'+k[0]).value.trim());if(o.map&&!/^https?:\/\//i.test(o.map))return toast('Map link must start with https://');D.info=o;save('Details saved ✿')}
+};
+$('#app').addEventListener('click',e=>{const t=e.target.closest('[data-a],[data-t]');if(!t)return;
+ if(t.dataset.t){tab=t.dataset.t;render();scrollTo(0,0);return}
+ if(t.dataset.a==='yr'){yr=+t.dataset.y;render()}else if(A[t.dataset.a])A[t.dataset.a](+t.dataset.i)});
+$('#app').addEventListener('change',e=>{const t=e.target;if(t.dataset.a==='st'){D.events[+t.dataset.i].status=t.value;save()}});
+api('me').then(r=>r.ok?start():login()).catch(e=>login(e.message));
+</script>
+</body>
+</html>
