@@ -154,17 +154,23 @@ load();
 setInterval(load,REFRESH_SECONDS*1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
 </script>
- <!-- Inside index.html -->
+<!-- Inside public index.html before </body> -->
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script>
   if (window.netlifyIdentity) {
-    window.netlifyIdentity.on("init", user => {
+    window.netlifyIdentity.on("init", (user) => {
       if (!user) {
         window.netlifyIdentity.on("login", () => {
           document.location.href = "/admin/";
         });
       }
     });
+
+    // Explicitly detect the token in the URL hash and force the modal open
+    const hash = window.location.hash;
+    if (hash && (hash.includes("invite_token") || hash.includes("recovery_token") || hash.includes("confirmation_token"))) {
+      window.netlifyIdentity.open();
+    }
   }
 </script>
 </body>
