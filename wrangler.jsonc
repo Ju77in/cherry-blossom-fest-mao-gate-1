@@ -8,6 +8,6 @@
     "run_worker_first": ["/api/*"]
   },
   "kv_namespaces": [
-    { "binding": "FEST", "id": "PASTE_YOUR_KV_NAMESPACE_ID_HERE" }
+    { "binding": "FEST", "id": "fd264dd4be754abe9e85391286d595e3" }
   ]
 }
