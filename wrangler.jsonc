@@ -10,4 +10,7 @@
   "kv_namespaces": [
     { "binding": "FEST", "id": "fd264dd4be754abe9e85391286d595e3" }
   ]
+  // ...
+  "vars": {},
+  // ...
 }
