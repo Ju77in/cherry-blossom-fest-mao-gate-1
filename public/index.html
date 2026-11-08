@@ -14,7 +14,6 @@
 <meta property="og:url" content="https://manipur-cherry-blossom-mao.in/">
 <meta property="og:image" content="https://manipur-cherry-blossom-mao.in/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="description" content="Notices, registrations, venue and photo albums for the Cherry Blossom Festival at Mao Gate, Senapati.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,7 +26,8 @@ body{margin:0;color:var(--ink);font:300 16px/1.7 Jost,system-ui,sans-serif;backg
 main{max-width:920px;margin:0 auto;padding:0 22px 90px}
 .hero{text-align:center;padding:84px 0 36px;position:relative;overflow:hidden}
 .eyebrow{font-size:.74rem;letter-spacing:.32em;text-transform:uppercase;color:var(--mute)}
-<h1>Manipur Cherry Blossom <em>Festival</em></h1><p class="sub">Held every year at Mao Gate, Senapati, Manipur</p>
+h1{font:400 clamp(2.5rem,8vw,4.4rem)/1.04 "Cormorant Garamond",Georgia,serif;margin:14px 0 10px}
+h1 em{color:var(--rose);font-style:italic}
 .sub{font:italic 400 1.2rem "Cormorant Garamond",Georgia,serif;color:var(--mute);margin:0}
 .bloom{width:54px;height:54px;margin:0 auto 6px;display:block;animation:sway 7s ease-in-out infinite}
 @keyframes sway{50%{transform:rotate(14deg) scale(1.06)}}
@@ -85,16 +85,16 @@ body{padding-bottom:env(safe-area-inset-bottom)}
 <body>
 <main>
 <header class="hero" id="hero"></header>
-<section class="view" id="notices"><h2><span class="live"></span>Notices</h2><p class="lead">Fresh updates from the festival grounds.</p><div id="nb"></div><button class="pill" id="more" hidden></button></section>
+<section class="view" id="notices"><h2><span class="live"></span>Notices</h2><p class="lead">Fresh updates from the festival grounds.</p><div id="nb"></div><button class="pill" id="more" hidden></button>
+<div id="about" style="margin-top:56px"><h2>About the festival</h2><article class="card">
+<p>The Manipur Cherry Blossom Festival is held every year at Mao Gate in Senapati district, Manipur, on the Manipur–Nagaland border, celebrating the blooming of the cherry blossoms.</p>
+<p>This year’s festival runs from 20 to 23 November 2026. Organised by the Cherry Blossom Committee, Mao.</p>
+</article></div></section>
 <section class="view" id="moments"><h2>Moments</h2><p class="lead">A keepsake album for every year’s festival.</p><div id="yr"></div><div id="mg"></div></section>
 <section class="view" id="register"><h2><span class="live"></span>Register</h2><p class="lead">Tickets, stalls and events. Details may change, so check back often.</p>
 <div class="grid2"><article class="card"><h3>Tickets</h3><p id="tk"></p><div id="tkb"></div></article><article class="card"><h3>Stall registration</h3><p id="sl"></p><div id="slb"></div></article></div>
 <h2 style="margin-top:40px">Events</h2><p class="lead">Marathon, trekking and more. This board updates live.</p><div id="ev"></div></section>
 <section class="view" id="venue"><h2>Venue &amp; route</h2><p class="lead">Finding your way to the festival.</p><article class="card"><h3 id="vn"></h3><p id="vr"></p><div id="vb"></div></article></section>
-<section id="about" style="margin-top:56px"><h2>About the festival</h2><article class="card">
-<p>The Manipur Cherry Blossom Festival is held every year at Mao Gate in Senapati district, Manipur, on the Manipur–Nagaland border, celebrating the blooming of the cherry blossoms. WHAT VISITORS CAN DO: STALLS, COMPETITIONS, FOOD, MUSIC.</p>
-<p>This year’s festival runs from Nov 20 to Nov 23. Organised by Cherry Blossom Commitee, Mao.</p>
-</article></section>
 <footer id="ft"></footer>
 </main>
 <div id="lb"><button class="cl" data-a="close">×</button><button class="p" data-a="prev">‹</button><button class="n" data-a="next">›</button><div id="lbc"></div></div>
@@ -108,14 +108,13 @@ const tel=p=>String(p).replace(/[^\d+]/g,'');
 const safeUrl=u=>/^(https?:\/\/|\/api\/media\/)/i.test(u)?u:'';
 let D={notices:[],events:[],moments:[],info:{}},cur=new Date().getFullYear(),showAll=false,li=0,last='',failed=false;
 
-
 /* ---------- loading the latest content from the site's own backend ---------- */
 async function load(){
  try{const r=await fetch('/api/data');if(!r.ok)throw 0;D=await r.json();D.info=D.info||{};failed=false}
  catch(x){if(!last)failed=true;else return}
  const s=JSON.stringify(D)+failed;if(s===last)return;last=s;draw()}
 
-/* ---------- photos and videos from Drive / YouTube / direct links ---------- */
+/* ---------- photos and videos from Cloudinary / Drive / YouTube / direct links ---------- */
 function media(m){const u=m.link||'',v=/^v/i.test(m.type||'');
  if(m.pid&&D.cloud){const b='https://res.cloudinary.com/'+D.cloud+'/',p=m.pid,poster=b+'video/upload/c_limit,w_800,so_0,f_jpg/'+p+'.jpg';
   if(m.rt==='video')return{k:'v',th:poster,big:poster,vid:b+'video/upload/q_auto/'+p+'.mp4',direct:1,poster:1};
@@ -152,12 +151,16 @@ function draw(){
  $('#vb').innerHTML=safeUrl(i.map)?`<a class="pill go" target="_blank" rel="noopener" href="${esc(i.map)}">Open in Maps</a>`:'';
  $('#ft').innerHTML=bloom(28)+((i.email||i.phone)?`<div class="eyebrow">Contact the organizers</div><p>${i.email?`<a href="mailto:${esc(i.email)}">${esc(i.email)}</a>`:''}${i.email&&i.phone?' · ':''}${i.phone?`<a href="tel:${esc(tel(i.phone))}">${esc(i.phone)}</a>`:''}</p>`:'<div class="eyebrow">Contact details coming soon</div>')+'<div style="margin-top:10px">With love, every year · Mao Gate, Senapati</div>';
  obs()}
+
+/* ---------- tabs ---------- */
 function view(v){if(!['notices','moments','register','venue'].includes(v))v='notices';document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id===v));document.querySelectorAll('[data-a=tab]').forEach(e=>e.classList.toggle('on',e.dataset.v===v));if(location.hash!=='#'+v)history.replaceState(null,'','#'+v);obs()}
 function show(i){const l=ms();if(!l.length)return;li=(i+l.length)%l.length;const m=l[li],x=media(m);
  $('#lbc').innerHTML=(x.k==='v'?(x.direct?`<video src="${esc(x.vid||x.th)}" controls autoplay playsinline></video>`:`<iframe src="${esc(x.em)}" allow="autoplay;fullscreen" allowfullscreen></iframe>`):`<img src="${esc(x.big)}" alt="">`)+(m.caption?`<p>${esc(m.caption)}</p>`:'');$('#lb').classList.add('on')}
 const hide=()=>{$('#lb').classList.remove('on');$('#lbc').innerHTML=''};
 document.addEventListener('click',e=>{const t=e.target.closest('[data-a],#more');if(!t)return;const a=t.dataset.a;
- if(t.id==='more'){showAll=!showAll;draw()}else if(a==='tab')view(t.dataset.v);else if(a==='yr'){cur=+t.dataset.y;draw()}
+ if(t.id==='more'){showAll=!showAll;draw()}
+ else if(a==='tab')view(t.dataset.v);
+ else if(a==='yr'){cur=+t.dataset.y;draw()}
  else if(a==='open')show(+t.dataset.i);else if(a==='close')hide();else if(a==='prev')show(li-1);else if(a==='next')show(li+1)});
 $('#lb').addEventListener('click',e=>{if(e.target.id==='lb')hide()});
 document.addEventListener('keydown',e=>{if(!$('#lb').classList.contains('on'))return;if(e.key==='Escape')hide();if(e.key==='ArrowRight')show(li+1);if(e.key==='ArrowLeft')show(li-1)});
@@ -167,7 +170,7 @@ load();
 setInterval(load,REFRESH_SECONDS*1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
 </script>
- <script type="application/ld+json">
+<script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Event","name":"Manipur Cherry Blossom Festival",
 "startDate":"2026-11-20","endDate":"2026-11-23",
 "eventStatus":"https://schema.org/EventScheduled",
@@ -175,7 +178,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
 "location":{"@type":"Place","name":"Mao Gate","address":{"@type":"PostalAddress","addressLocality":"Senapati","addressRegion":"Manipur","addressCountry":"IN"}},
 "image":"https://manipur-cherry-blossom-mao.in/og.jpg",
 "description":"Annual cherry blossom festival at Mao Gate, Senapati, Manipur.",
-"organizer":{"@type":"Organization","name":"Cherry Blossom Committee, Mao","url":"https://manipur-cherry-blossom-mao.in/","sameAs":["FACEBOOK PAGE URL","INSTAGRAM PAGE URL"]},
+"organizer":{"@type":"Organization","name":"Cherry Blossom Committee, Mao","url":"https://manipur-cherry-blossom-mao.in/"},
 "url":"https://manipur-cherry-blossom-mao.in/"}
 </script>
 </body>
